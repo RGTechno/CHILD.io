@@ -37,7 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   app_usage: ^2.1.1
   package_info_plus: ^3.0.3
-  usage_stats: ^1.2.0
+  google_nav_bar: ^5.0.6
+  line_icons: ^2.0.1
 
 dev_dependencies:
   flutter_test:

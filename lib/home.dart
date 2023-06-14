@@ -1,7 +1,7 @@
+import 'package:child_io/screens/app_usage_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:app_usage/app_usage.dart';
-
-void main() => runApp(Home());
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:line_icons/line_icons.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -9,55 +9,79 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<AppUsageInfo> _infos = [];
-
-  void getUsageStats() async {
-    try {
-      DateTime endDate = DateTime.now();
-      DateTime startDate = endDate.subtract(Duration(hours: 1));
-      List<AppUsageInfo> infoList =
-          await AppUsage().getAppUsage(startDate, endDate);
-      setState(() => _infos = infoList);
-
-      for (var info in infoList) {
-        print(info.toString());
-      }
-    } on AppUsageException catch (exception) {
-      print(exception);
-    }
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    // TODO: implement setState
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
-  @override
-  void initState() {
-    getUsageStats();
-    super.initState();
-  }
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+  List<Widget> _widgetOptions = <Widget>[
+    AppUsageScreen(),
+    Text(
+      'LeaderBoard',
+      style: optionStyle,
+    ),
+    Text(
+      'Friends',
+      style: optionStyle,
+    ),
+    Text(
+      'Profile',
+      style: optionStyle,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('App Usage Example'),
-          backgroundColor: Colors.green,
+    return Scaffold(
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 20,
+              color: Colors.black.withOpacity(.1),
+            )
+          ],
         ),
-        body: ListView.builder(
-            itemCount: _infos.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                  title: Text(_infos[index].appName),
-                  trailing: Text("${_infos[index].usage.inHours.toString()}hrs ${_infos[index].usage.inMinutes.toString()}mins"));
-            }),
-        // floatingActionButton: FloatingActionButton(
-        //     onPressed: getUsageStats, child: Icon(Icons.file_download)),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            child: GNav(
+              rippleColor: Colors.grey[300]!,
+              hoverColor: Colors.grey[100]!,
+              gap: 8,
+              activeColor: Colors.black,
+              iconSize: 24,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              duration: Duration(milliseconds: 400),
+              tabBackgroundColor: Colors.grey[100]!,
+              color: Colors.black,
+              tabs: [
+                GButton(
+                  icon: LineIcons.home,
+                  text: 'Home',
+                ),
+                GButton(
+                  icon: LineIcons.lineChart,
+                  text: 'Leaderboard',
+                ),
+                GButton(
+                  icon: LineIcons.userFriends,
+                  text: 'Friends',
+                ),
+                GButton(
+                  icon: LineIcons.user,
+                  text: 'Profile',
+                ),
+              ],
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
