@@ -185,7 +185,7 @@ class _AuthHomeState extends State<AuthHome> {
                                 controller: _emailController,
                                 focusNode: _email,
                                 decoration: inpDec(
-                                  "Enter Email-ID",
+                                  "Enter Email ID",
                                   "Email",
                                 ),
                                 validator: (value) {
