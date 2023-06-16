@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
   List<Widget> _widgetOptions = <Widget>[
     AppUsageScreen(),
     Text(
-      'LeaderBoard',
+      'Ranks',
       style: optionStyle,
     ),
     Text(
@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
                 ),
                 GButton(
                   icon: LineIcons.lineChart,
-                  text: 'Leaderboard',
+                  text: 'Ranks',
                 ),
                 GButton(
                   icon: LineIcons.userFriends,
