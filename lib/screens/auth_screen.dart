@@ -2,6 +2,9 @@ import 'package:child_io/color.dart';
 import 'package:child_io/widgets/input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/auth_provider.dart';
 
 class AuthHome extends StatefulWidget {
   @override
@@ -68,7 +71,7 @@ class _AuthHomeState extends State<AuthHome> {
         setState(() {
           _isLoading = true;
         });
-        print("login");
+        await context.read<AuthProvider>().login(context);
         setState(() {
           _isLoading = false;
         });
@@ -76,7 +79,7 @@ class _AuthHomeState extends State<AuthHome> {
         setState(() {
           _isLoading = true;
         });
-        print("signup");
+        await context.read<AuthProvider>().login(context);
         _firstNameController.clear();
         _lastNameController.clear();
         _emailController.clear();

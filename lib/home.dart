@@ -2,6 +2,7 @@ import 'package:child_io/screens/app_usage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:location/location.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -9,6 +10,32 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future<void> getLocationPermission() async {
+    Location location = Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    if (await location.isBackgroundModeEnabled()) {
+      location.enableBackgroundMode(enable: true);
+    }
+  }
+
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
@@ -27,6 +54,12 @@ class _HomeState extends State<Home> {
       style: optionStyle,
     ),
   ];
+
+  @override
+  void initState() {
+    getLocationPermission();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

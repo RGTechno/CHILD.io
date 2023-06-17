@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:app_usage/app_usage.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:location/location.dart' as loc;
+import 'package:location/location.dart';
 
 class AppUsageScreen extends StatefulWidget {
   @override
@@ -8,7 +12,30 @@ class AppUsageScreen extends StatefulWidget {
 
 class _AppUsageScreenState extends State<AppUsageScreen> {
   List<AppUsageInfo> _infos = [];
+  LocationData? _currentLocation;
+  String currentLocationString = "";
   Duration totalTime = Duration();
+
+  Future<void> getCurrentLocation() async {
+    final location = loc.Location();
+    final locationData = await location.getLocation();
+
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      locationData.latitude!,
+      locationData.longitude!,
+      localeIdentifier: "en",
+    ); // lat,long
+
+    print(placemarks[0]);
+
+    setState(() {
+      currentLocationString =
+          "${placemarks[0].street}, ${placemarks[0].subLocality}, ${placemarks[0].locality}, ${placemarks[0].postalCode}, ${placemarks[0].country}";
+      _currentLocation = locationData;
+    });
+
+    print(_currentLocation);
+  }
 
   Future<void> getUsageStats() async {
     try {
@@ -44,6 +71,7 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
 
   @override
   void initState() {
+    getCurrentLocation();
     getUsageStats();
     super.initState();
   }
@@ -99,27 +127,37 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
                     ),
                     Positioned(
                       right: 0,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 8,
-                        ),
-                        padding: const EdgeInsets.all(6.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.yellow,
-                            width: 1,
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(LineIcons.locationArrow),
+                              Text(currentLocationString),
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "200C",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.yellow,
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 8,
+                            ),
+                            padding: const EdgeInsets.all(6.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.yellow,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              "200C",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.yellow,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ],
@@ -158,7 +196,8 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
                     itemBuilder: (context, index) {
                       return Container(
                         color: Color(0xffFFEEE6),
-                        margin: EdgeInsets.symmetric(vertical: 2,horizontal: 8),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                         child: ListTile(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
