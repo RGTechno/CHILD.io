@@ -1,3 +1,5 @@
+import 'package:child_io/color.dart';
+import 'package:child_io/provider/auth_provider.dart';
 import 'package:child_io/screens/app_usage_screen.dart';
 import 'package:child_io/screens/friends_screen.dart';
 import 'package:child_io/screens/profile_screen.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -45,7 +48,6 @@ class _HomeState extends State<Home> {
     AppUsageScreen(),
     FriendsScreen(),
     RanksScreen(),
-    ProfileScreen(),
   ];
 
   @override
@@ -57,6 +59,38 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: secondaryColor,
+              ),
+              child: Expanded(
+                child: Text(
+                  'Hey! User',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 24,
+                    color: textColor,
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              title: const Text('Link Parent'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: const Text('Logout'),
+              onTap: () async {
+                await context.read<AuthProvider>().logout();
+              },
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -95,10 +129,6 @@ class _HomeState extends State<Home> {
                 GButton(
                   icon: LineIcons.lineChart,
                   text: 'Ranks',
-                ),
-                GButton(
-                  icon: LineIcons.user,
-                  text: 'Profile',
                 ),
               ],
               selectedIndex: _selectedIndex,

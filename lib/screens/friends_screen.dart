@@ -70,7 +70,7 @@ class _FriendsScreenState extends State<FriendsScreen>
       ),
       child: Column(
         children: [
-          Header(300, mediaQuery.height * 0.05, title: "Friends"),
+          Header(300, mediaQuery.height * 0.05),
           TabBar(
             unselectedLabelColor: secondaryColor,
             labelColor: primaryColor,

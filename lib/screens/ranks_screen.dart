@@ -96,12 +96,13 @@ class _RanksScreenState extends State<RanksScreen> {
           pinned: true,
           snap: false,
           floating: false,
+          automaticallyImplyLeading: false,
           expandedHeight: mediaQuery.height * 0.35,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(4.0),
             child: Container(
               color: bg1,
-              height: mediaQuery.height * 0.08,
+              height: mediaQuery.height * 0.06,
               child: Container(
                 child: Row(
                   children: [

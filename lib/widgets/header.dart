@@ -1,7 +1,8 @@
 import 'package:child_io/color.dart';
 import 'package:flutter/material.dart';
 
-Widget Header(int coins, double height, {String? title}) {
+Widget Header(int coins, double height) {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   return Container(
     height: height,
     width: double.infinity,
@@ -9,16 +10,12 @@ Widget Header(int coins, double height, {String? title}) {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        title != null
-            ? Text(
-                title,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              )
-            : Container(),
+        IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {
+            _key.currentState!.openDrawer();
+          },
+        ),
         Container(
           decoration: BoxDecoration(
               border: Border.all(color: accentColor),
