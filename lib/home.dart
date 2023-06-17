@@ -1,4 +1,7 @@
 import 'package:child_io/screens/app_usage_screen.dart';
+import 'package:child_io/screens/friends_screen.dart';
+import 'package:child_io/screens/profile_screen.dart';
+import 'package:child_io/screens/ranks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
@@ -37,22 +40,12 @@ class _HomeState extends State<Home> {
   }
 
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
-  List<Widget> _widgetOptions = <Widget>[
+
+  final List<Widget> _widgetOptions = <Widget>[
     AppUsageScreen(),
-    Text(
-      'Ranks',
-      style: optionStyle,
-    ),
-    Text(
-      'Friends',
-      style: optionStyle,
-    ),
-    Text(
-      'Profile',
-      style: optionStyle,
-    ),
+    FriendsScreen(),
+    RanksScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -64,7 +57,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: SafeArea(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -94,12 +89,12 @@ class _HomeState extends State<Home> {
                   text: 'Home',
                 ),
                 GButton(
-                  icon: LineIcons.lineChart,
-                  text: 'Ranks',
-                ),
-                GButton(
                   icon: LineIcons.userFriends,
                   text: 'Friends',
+                ),
+                GButton(
+                  icon: LineIcons.lineChart,
+                  text: 'Ranks',
                 ),
                 GButton(
                   icon: LineIcons.user,
