@@ -1,10 +1,14 @@
 import 'package:child_io/color.dart';
+import 'package:child_io/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart' as loc;
 import 'package:location/location.dart';
+import 'package:proste_bezier_curve/proste_bezier_curve.dart';
+import 'package:proste_bezier_curve/utils/type/index.dart';
 
 class AppUsageScreen extends StatefulWidget {
   @override
@@ -12,6 +16,8 @@ class AppUsageScreen extends StatefulWidget {
 }
 
 class _AppUsageScreenState extends State<AppUsageScreen> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   List<AppUsageInfo> _infos = [];
   LocationData? _currentLocation;
   String currentLocationString = "";
@@ -62,6 +68,16 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
     }
   }
 
+  String formatDuration(int milliseconds) {
+    var secs = milliseconds ~/ 1000;
+    var hours = (secs ~/ 3600).toString().padLeft(2, '0');
+    var minutes = ((secs % 3600) ~/ 60).toString().padLeft(2, '0');
+    var seconds = (secs % 60).toString().padLeft(2, '0');
+    return double.parse(hours) >= 1
+        ? "$hours hrs $minutes mins $seconds secs"
+        : "$minutes mins $seconds secs";
+  }
+
   @override
   void setState(VoidCallback fn) {
     // TODO: implement setState
@@ -85,15 +101,45 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Header(300, mediaQuery.height * 0.05, context: context,),
+          ),
           Container(
             height: mediaQuery.height * 0.35,
             width: double.infinity,
-            color: Color(0xff274296),
-            child: Stack(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              color: primaryColor,
+              image: DecorationImage(
+                  image: AssetImage("assets/images/bg_cover.png"),
+                  fit: BoxFit.cover),
+            ),
+            margin: EdgeInsets.symmetric(vertical: 10),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Expanded(
+                //   child: Row(
+                //     children: [
+                //       Icon(Icons.location_on_outlined),
+                //       Expanded(
+                //         child: Text(
+                //           currentLocationString,
+                //           // overflow: TextOverflow.ellipsis,
+                //           softWrap: true,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Center(
                   child: Text(
-                    totalTime.toString(),
+                    formatDuration(totalTime.inMilliseconds),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
@@ -101,62 +147,17 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 8,
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
                     child: Text(
-                      "Rahul's Phone",
-                      textAlign: TextAlign.center,
+                      "Today's Total Usage",
                       style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  child: Row(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(LineIcons.locationArrow),
-                          Text(currentLocationString),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 8,
-                        ),
-                        padding: const EdgeInsets.all(6.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.yellow,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "200C",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.yellow,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ],
@@ -192,22 +193,44 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
               child: ListView.builder(
                 itemCount: _infos.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: secondaryColor,
-                      borderRadius: BorderRadius.circular(10),
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    elevation: 2,
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      title: Text(_infos[index].appName),
-                      trailing: Text(
-                        _infos[index].startDate.toString(),
-                      ),
-                      subtitle: Text(
-                        _infos[index].usage.toString(),
+                      child: ListTile(
+                        title: Text(
+                          _infos[index].appName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: textColor,
+                          ),
+                        ),
+                        subtitle: Text(
+                          DateFormat('d MMM y hh:mm a').format(
+                            _infos[index].startDate,
+                          ),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: textColor.withOpacity(0.5),
+                          ),
+                        ),
+                        trailing: Text(
+                          formatDuration(_infos[index].usage.inMilliseconds),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: textColor.withOpacity(0.7),
+                          ),
+                        ),
                       ),
                     ),
                   );

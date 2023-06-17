@@ -63,7 +63,6 @@ class _AuthHomeState extends State<AuthHome> {
     final mediaQuery = MediaQuery.of(context).size;
     void validate() async {
       if (!_authHomeKey.currentState!.validate()) {
-        print("Invalid");
         return;
       }
       _authHomeKey.currentState!.save();
@@ -105,17 +104,53 @@ class _AuthHomeState extends State<AuthHome> {
               body: Container(
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
-                // margin: EdgeInsets.all(10),
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      Container(
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          "assets/images/login.jpg",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          !wantSignup ? "Welcome Back!" : "Get Started",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 28,
+                            color: textColor,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          !wantSignup
+                              ? "Resume your journey of balanced well being"
+                              : "Begin your journey of balanced well being",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: textColor.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
                       Form(
                         key: _authHomeKey,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            wantSignup
+                                ? SizedBox(
+                                    height: mediaQuery.height * 0.02,
+                                  )
+                                : Container(),
                             wantSignup
                                 ? Padding(
                                     padding: const EdgeInsets.all(3.0),
@@ -146,9 +181,11 @@ class _AuthHomeState extends State<AuthHome> {
                                     ),
                                   )
                                 : Container(),
-                            SizedBox(
-                              height: mediaQuery.height * 0.02,
-                            ),
+                            wantSignup
+                                ? SizedBox(
+                                    height: mediaQuery.height * 0.02,
+                                  )
+                                : Container(),
                             wantSignup
                                 ? Padding(
                                     padding: const EdgeInsets.all(3.0),
@@ -248,34 +285,39 @@ class _AuthHomeState extends State<AuthHome> {
                                 },
                               ),
                             ),
-                            TextButton.icon(
-                              focusNode: _create,
-                              onPressed: validate,
-                              icon: Icon(
-                                !wantSignup
-                                    ? Icons.login_rounded
-                                    : Icons.app_registration,
-                                color: Colors.black54,
-                              ),
-                              label: Text(
-                                !wantSignup ? "Login" : "Create",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black54,
+                            GestureDetector(
+                              onTap: validate,
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 8,
                                 ),
-                              ),
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all<
-                                    EdgeInsetsGeometry>(
-                                  EdgeInsets.symmetric(horizontal: 20),
+                                margin: EdgeInsets.symmetric(
+                                  vertical: 15,
                                 ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    side: BorderSide(
-                                      color: Colors.black54,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: secondaryColor,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      !wantSignup ? "Login" : "Create",
+                                      style: TextStyle(
+                                        color: textColor,
+                                        fontSize: 18,
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(width: 10),
+                                    Icon(
+                                      !wantSignup
+                                          ? Icons.login_rounded
+                                          : Icons.app_registration,
+                                      color: textColor,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -287,15 +329,17 @@ class _AuthHomeState extends State<AuthHome> {
                               },
                               child: !wantSignup
                                   ? Text(
-                                      "New User! Sign Up Here",
-                                      style: GoogleFonts.poppins(
-                                        color: Colors.black54,
+                                      "New User? Sign Up Here!",
+                                      style: TextStyle(
+                                        color: textColor.withOpacity(0.7),
+                                        fontSize: 16,
                                       ),
                                     )
                                   : Text(
-                                      "Already a member!,Login Here",
-                                      style: GoogleFonts.poppins(
-                                        color: Colors.black54,
+                                      "Already a member? Login Here!",
+                                      style: TextStyle(
+                                        color: textColor.withOpacity(0.7),
+                                        fontSize: 16,
                                       ),
                                     ),
                             ),

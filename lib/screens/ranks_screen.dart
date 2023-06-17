@@ -2,13 +2,6 @@ import 'package:child_io/color.dart';
 import 'package:child_io/widgets/header.dart';
 import 'package:flutter/material.dart';
 
-const Color bg = secondaryColor;
-const Color bg1 = primaryColor;
-const Color cardBg = bgColor;
-Color gold = Color(0xFFD0B13E);
-Color silver = Color(0xFFE7E7E7);
-Color bronze = Color(0xFFA45735);
-
 class RanksScreen extends StatefulWidget {
   const RanksScreen({Key? key}) : super(key: key);
 
@@ -17,6 +10,8 @@ class RanksScreen extends StatefulWidget {
 }
 
 class _RanksScreenState extends State<RanksScreen> {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   List<String> names = [
     "1",
     "2",
@@ -101,7 +96,7 @@ class _RanksScreenState extends State<RanksScreen> {
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(4.0),
             child: Container(
-              color: bg1,
+              color: primaryColor,
               height: mediaQuery.height * 0.06,
               child: Container(
                 child: Row(
@@ -144,8 +139,8 @@ class _RanksScreenState extends State<RanksScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: <Color>[
-                    secondaryColor.withOpacity(0.5),
-                    primaryColor
+                    primaryColor,
+                    primaryColor,
                   ],
                 ),
               ),
@@ -156,16 +151,21 @@ class _RanksScreenState extends State<RanksScreen> {
                       vertical: 8.0,
                       horizontal: 8,
                     ),
-                    child: Header(300, mediaQuery.height * 0.05),
+                    child: Header(
+                      300,
+                      mediaQuery.height * 0.05,
+                      context: context,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 50.0),
                     child: Text(
                       "LEADERBOARD",
                       style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.grey[200],
-                          fontWeight: FontWeight.bold),
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -173,7 +173,7 @@ class _RanksScreenState extends State<RanksScreen> {
                   ),
                   Icon(
                     Icons.emoji_events_rounded,
-                    color: gold,
+                    color: secondaryColor,
                     size: 70,
                   ),
                 ],

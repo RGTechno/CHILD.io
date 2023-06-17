@@ -1,8 +1,11 @@
 import 'package:child_io/color.dart';
 import 'package:flutter/material.dart';
 
-Widget Header(int coins, double height) {
-  final GlobalKey<ScaffoldState> _key = GlobalKey();
+Widget Header(
+  int coins,
+  double height, {
+  required BuildContext context,
+}) {
   return Container(
     height: height,
     width: double.infinity,
@@ -13,7 +16,7 @@ Widget Header(int coins, double height) {
         IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
-            _key.currentState!.openDrawer();
+            Scaffold.of(context).openDrawer();
           },
         ),
         Container(

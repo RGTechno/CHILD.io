@@ -67,14 +67,14 @@ class _HomeState extends State<Home> {
               decoration: BoxDecoration(
                 color: secondaryColor,
               ),
-              child: Expanded(
-                child: Text(
-                  'Hey! User',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 24,
-                    color: textColor,
-                  ),
+              child: Text(
+                'Hey! User',
+                // overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 24,
+                  color: textColor,
                 ),
               ),
             ),

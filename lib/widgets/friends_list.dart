@@ -9,16 +9,21 @@ class FriendsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemBuilder: (ctx, i) => Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        margin: EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
-          color: secondaryColor,
-          borderRadius: BorderRadius.circular(10),
+      itemBuilder: (ctx, i) => Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: ListTile(
-          title: Text("NAME"), //TODO
-          subtitle: Text("USER_ID"), //TODO
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ListTile(
+            title: Text("NAME"), //TODO
+            subtitle: Text("USER_ID"), //TODO
+          ),
         ),
       ),
       itemCount: friendsList.length,

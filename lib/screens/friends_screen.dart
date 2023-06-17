@@ -13,6 +13,8 @@ class FriendsScreen extends StatefulWidget {
 
 class _FriendsScreenState extends State<FriendsScreen>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   late TabController _tabController;
 
   List allFriends = [
@@ -82,10 +84,10 @@ class _FriendsScreenState extends State<FriendsScreen>
         ),
         child: Column(
           children: [
-            Header(300, mediaQuery.height * 0.05),
+            Header(300, mediaQuery.height * 0.05,context: context,),
             TabBar(
-              unselectedLabelColor: secondaryColor,
-              labelColor: primaryColor,
+              unselectedLabelColor: textColor,
+              labelColor: Color(0xff536599),
               tabs: [
                 Tab(
                   text: 'Friends',
