@@ -1,4 +1,5 @@
 import 'package:child_io/color.dart';
+import 'package:child_io/widgets/header.dart';
 import 'package:flutter/material.dart';
 
 const Color bg = secondaryColor;
@@ -87,6 +88,7 @@ class _RanksScreenState extends State<RanksScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
@@ -94,12 +96,12 @@ class _RanksScreenState extends State<RanksScreen> {
           pinned: true,
           snap: false,
           floating: false,
-          expandedHeight: 200.0,
+          expandedHeight: mediaQuery.height * 0.35,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(4.0),
             child: Container(
               color: bg1,
-              height: 50,
+              height: mediaQuery.height * 0.08,
               child: Container(
                 child: Row(
                   children: [
@@ -140,11 +142,21 @@ class _RanksScreenState extends State<RanksScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: <Color>[secondaryColor.withOpacity(0.5), primaryColor],
+                  colors: <Color>[
+                    secondaryColor.withOpacity(0.5),
+                    primaryColor
+                  ],
                 ),
               ),
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 8,
+                    ),
+                    child: Header(300, mediaQuery.height * 0.05),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 50.0),
                     child: Text(
@@ -194,9 +206,11 @@ class _RanksScreenState extends State<RanksScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text(pos,
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
+            Text(
+              pos,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
             CircleAvatar(
               foregroundColor: Colors.green,
             ),
