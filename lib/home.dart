@@ -2,8 +2,8 @@ import 'package:child_io/color.dart';
 import 'package:child_io/provider/auth_provider.dart';
 import 'package:child_io/screens/app_usage_screen.dart';
 import 'package:child_io/screens/friends_screen.dart';
-import 'package:child_io/screens/profile_screen.dart';
 import 'package:child_io/screens/ranks_screen.dart';
+import 'package:child_io/widgets/link_users.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
@@ -80,7 +80,13 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               title: const Text('Link Parent'),
-              onTap: () {},
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      LinkAlertInp("Link to Parent"),
+                );
+              },
             ),
             ListTile(
               title: const Text('Logout'),
