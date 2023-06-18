@@ -279,16 +279,6 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
                             color: textColor,
                           ),
                         ),
-                        subtitle: Text(
-                          DateFormat('d MMM y hh:mm a').format(
-                            _infos[index].startDate,
-                          ),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: textColor.withOpacity(0.5),
-                          ),
-                        ),
                         trailing: Text(
                           formatDuration(_infos[index].usage.inMilliseconds),
                           style: TextStyle(
