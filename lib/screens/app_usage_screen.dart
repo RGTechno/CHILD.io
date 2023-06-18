@@ -169,7 +169,6 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
             child: Header(
               300,
               mediaQuery.height * 0.05,
-              context: context,
             ),
           ),
           Container(

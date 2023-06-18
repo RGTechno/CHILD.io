@@ -58,6 +58,8 @@ class _FriendsScreenState extends State<FriendsScreen>
     "jdnjds",
   ];
 
+  String friendID = "";
+
   Future<void> getFriends() async {
     try {
       setState(() {
@@ -82,6 +84,34 @@ class _FriendsScreenState extends State<FriendsScreen>
           _isLoading = false;
         });
       }
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> sendRequest() async {
+    if (friendID.isEmpty) {
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    var userData = await prefs.getString("user");
+    var jsonUser = json.decode(userData!);
+    try {
+      var url = Uri.https(
+        apiHost,
+        "/api/child/friends/add",
+      );
+      var response = await http.post(url,
+          body: json.encode(
+            {
+              "senderUserID": jsonUser["userID"],
+              "receiverUserID": int.parse(friendID),
+            },
+          ),
+          headers: {'Content-Type': 'application/json'});
+      print(response.body);
+      var jsonResponse = json.decode(response.body);
+      getFriends();
     } catch (err) {
       print(err);
     }
@@ -118,8 +148,62 @@ class _FriendsScreenState extends State<FriendsScreen>
               onPressed: () {
                 showDialog<void>(
                   context: context,
-                  builder: (BuildContext context) =>
-                      LinkAlertInp("Link to Friend"),
+                  builder: (BuildContext context) => AlertDialog(
+                    title: Text("Add Friend"),
+                    content: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Enter User ID",
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          friendID = value;
+                        });
+                      },
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    actionsAlignment: MainAxisAlignment.spaceBetween,
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await sendRequest();
+                        },
+                        child: const Text(
+                          'Send Request',
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        ),
+                        style: ButtonStyle(
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            EdgeInsets.symmetric(horizontal: 20),
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: BorderSide(
+                                color: textColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
               backgroundColor: primaryColor,
@@ -137,7 +221,6 @@ class _FriendsScreenState extends State<FriendsScreen>
                     Header(
                       300,
                       mediaQuery.height * 0.05,
-                      context: context,
                     ),
                     TabBar(
                       unselectedLabelColor: textColor,
@@ -163,13 +246,13 @@ class _FriendsScreenState extends State<FriendsScreen>
                           FriendsList(
                             friendsList: allFriends,
                             isReceived: false,
-                            refresh: (){},
+                            refresh: () {},
                           ),
                           // current accepted friends from both parties
                           FriendsList(
                             friendsList: sentFriendsRequest,
                             isReceived: false,
-                            refresh: (){},
+                            refresh: () {},
                           ),
                           // sent friend request
                           FriendsList(

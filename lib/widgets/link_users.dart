@@ -24,7 +24,7 @@ Widget LinkAlertInp(String title) {
         ),
       ),
       TextButton(
-        onPressed: () => {},
+        onPressed: () {},
         child: const Text(
           'Link',
           style: TextStyle(

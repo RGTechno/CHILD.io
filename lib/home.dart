@@ -13,6 +13,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _HomeState extends State<Home> {
   bool _isloading = false;
 
   var user;
+
+  String parentID = "";
 
   Future<void> getLocationPermission() async {
     Location location = Location();
@@ -64,8 +67,58 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Future<void> getCoins() async {
+    try {
+      setState(() {
+        _isloading = true;
+      });
+      var url = Uri.https(apiHost, "/api/child/coins", {
+        "userID": user["userID"].toString(),
+      });
+      var response = await http.get(url);
+      var jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> linkParent() async {
+    if (parentID.isEmpty) {
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    var userData = await prefs.getString("user");
+    var jsonUser = json.decode(userData!);
+    Navigator.of(context).pop();
+    try {
+      var url = Uri.https(
+        apiHost,
+        "/api/child/link-parent",
+      );
+      var response = await http.post(url,
+          body: json.encode(
+            {
+              "userID": jsonUser["userID"],
+              "parentID": int.parse(parentID),
+            },
+          ),
+          headers: {'Content-Type': 'application/json'});
+      print(response.body);
+      var jsonResponse = json.decode(response.body);
+      if (jsonResponse["success"]) {
+        jsonUser["parentID"] = parentID;
+      }
+      await prefs.setString("user", json.encode(jsonUser));
+      getUserData();
+    } catch (err) {
+      print(err);
+    }
+  }
+
   Future<void> init() async {
     await getUserData();
+    // await getCoins();
   }
 
   int _selectedIndex = 0;
@@ -119,6 +172,21 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  user?["parentID"] == null
+                      ? Container()
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            'Linked Parent ID - ${user?["parentID"]}',
+                            // overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -129,8 +197,62 @@ class _HomeState extends State<Home> {
                     onTap: () {
                       showDialog<void>(
                         context: context,
-                        builder: (BuildContext context) =>
-                            LinkAlertInp("Link to Parent"),
+                        builder: (BuildContext context) => AlertDialog(
+                          title: Text("Link to Parent"),
+                          content: TextField(
+                            decoration: InputDecoration(
+                              hintText: "Enter User ID",
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                parentID = value;
+                              });
+                            },
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          actionsAlignment: MainAxisAlignment.spaceBetween,
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await linkParent();
+                              },
+                              child: const Text(
+                                'LINK',
+                                style: TextStyle(
+                                  color: textColor,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(
+                                  EdgeInsets.symmetric(horizontal: 20),
+                                ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    side: BorderSide(
+                                      color: textColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
