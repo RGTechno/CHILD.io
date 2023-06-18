@@ -93,15 +93,33 @@ class _HomeState extends State<Home> {
               decoration: BoxDecoration(
                 color: secondaryColor,
               ),
-              child: Text(
-                'Hey, ${user?["firstName"]}',
-                // overflow: TextOverflow.ellipsis,
-                softWrap: true,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 24,
-                  color: textColor,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hey, ${user?["firstName"]}',
+                    // overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 24,
+                      color: textColor,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'UserID - ${user?["userID"]}',
+                      // overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             user?["parentID"] != null
