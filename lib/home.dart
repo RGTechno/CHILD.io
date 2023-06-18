@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:child_io/color.dart';
+import 'package:child_io/constants.dart';
 import 'package:child_io/provider/auth_provider.dart';
 import 'package:child_io/screens/app_usage_screen.dart';
 import 'package:child_io/screens/friends_screen.dart';
@@ -9,6 +12,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,6 +20,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool _isloading = false;
+
+  var user;
+
   Future<void> getLocationPermission() async {
     Location location = Location();
 
@@ -42,22 +50,40 @@ class _HomeState extends State<Home> {
     }
   }
 
-  int _selectedIndex = 0;
+  Future<void> getUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var userData = await prefs.getString("user");
+      var jsonUser = json.decode(userData!);
+      setState(() {
+        user = jsonUser;
+      });
+      print(user);
+    } catch (err) {
+      print(err);
+    }
+  }
 
-  final List<Widget> _widgetOptions = <Widget>[
-    AppUsageScreen(),
-    FriendsScreen(),
-    RanksScreen(),
-  ];
+  Future<void> init() async {
+    await getUserData();
+  }
+
+  int _selectedIndex = 0;
 
   @override
   void initState() {
+    init();
     getLocationPermission();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _widgetOptions = <Widget>[
+      AppUsageScreen(),
+      FriendsScreen(),
+      RanksScreen(),
+    ];
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -68,7 +94,7 @@ class _HomeState extends State<Home> {
                 color: secondaryColor,
               ),
               child: Text(
-                'Hey! User',
+                'Hey, ${user?["firstName"]}',
                 // overflow: TextOverflow.ellipsis,
                 softWrap: true,
                 style: TextStyle(
@@ -78,16 +104,18 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            ListTile(
-              title: const Text('Link Parent'),
-              onTap: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      LinkAlertInp("Link to Parent"),
-                );
-              },
-            ),
+            user?["parentID"] != null
+                ? Container()
+                : ListTile(
+                    title: const Text('Link Parent'),
+                    onTap: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            LinkAlertInp("Link to Parent"),
+                      );
+                    },
+                  ),
             ListTile(
               title: const Text('Logout'),
               onTap: () async {

@@ -1,27 +1,75 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:child_io/color.dart';
+import 'package:child_io/constants.dart';
 import 'package:child_io/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:app_usage/app_usage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart' as loc;
 import 'package:location/location.dart';
-import 'package:proste_bezier_curve/proste_bezier_curve.dart';
-import 'package:proste_bezier_curve/utils/type/index.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class AppUsageScreen extends StatefulWidget {
+  const AppUsageScreen({super.key});
+
   @override
   _AppUsageScreenState createState() => _AppUsageScreenState();
 }
 
 class _AppUsageScreenState extends State<AppUsageScreen> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  Timer _timer = Timer(Duration(milliseconds: 1), () {});
 
   List<AppUsageInfo> _infos = [];
   LocationData? _currentLocation;
   String currentLocationString = "";
   Duration totalTime = Duration();
+
+  var user;
+
+  Future<void> getUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var userData = await prefs.getString("user");
+      var jsonUser = json.decode(userData!);
+      setState(() {
+        user = jsonUser;
+      });
+      print(user);
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> sendAppUsage() async {
+    await getUserData();
+    await getUsageStats();
+    try {
+      var url = Uri.https(apiHost, "/api/child/app-usage");
+      var data = [];
+      for (var i in _infos) {
+        var info = {
+          "userID": user["userID"],
+          "activityDate": DateTime.now().toString(),
+          "app": i.appName,
+          "duration": i.usage.inMinutes,
+        };
+        data.add(info);
+      }
+      print(data);
+      var response = await http.post(url,
+          body: json.encode({"data": data}),
+          headers: {"Content-Type": 'application/json'});
+
+      print(response.body);
+    } catch (err) {
+      print(err);
+    }
+  }
 
   Future<void> getCurrentLocation() async {
     final location = loc.Location();
@@ -42,6 +90,13 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
     });
 
     print(_currentLocation);
+  }
+
+  Future<void> init() async {
+    await sendAppUsage();
+    _timer = Timer.periodic(const Duration(minutes: 30), (timer) async {
+      await sendAppUsage();
+    });
   }
 
   Future<void> getUsageStats() async {
@@ -90,7 +145,15 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
   void initState() {
     getCurrentLocation();
     getUsageStats();
+    init();
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -103,7 +166,11 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Header(300, mediaQuery.height * 0.05, context: context,),
+            child: Header(
+              300,
+              mediaQuery.height * 0.05,
+              context: context,
+            ),
           ),
           Container(
             height: mediaQuery.height * 0.35,
