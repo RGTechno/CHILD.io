@@ -93,6 +93,7 @@ class _FriendsScreenState extends State<FriendsScreen>
     if (friendID.isEmpty) {
       return;
     }
+    Navigator.of(context).pop();
     final prefs = await SharedPreferences.getInstance();
     var userData = await prefs.getString("user");
     var jsonUser = json.decode(userData!);

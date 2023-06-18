@@ -52,35 +52,39 @@ class FriendsList extends StatelessWidget {
       }
     }
 
-    return ListView.builder(
-      itemBuilder: (ctx, index) => Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: secondaryColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: ListTile(
-            title: Text(friendsList[index]["firstName"] +
-                " " +
-                friendsList[index]["lastName"]),
-            subtitle:
-                Text("UserID - ${friendsList[index]["userID"].toString()}"),
-            trailing: isReceived
-                ? IconButton(
-                    onPressed: () async {
-                      await acceptRequest(friendsList[index]["userID"]);
-                    },
-                    icon: Icon(Icons.check))
-                : Text(""),
-          ),
-        ),
-      ),
-      itemCount: friendsList.length,
-    );
+    return friendsList.isEmpty
+        ? Center(
+            child: Text("Nothing to display"),
+          )
+        : ListView.builder(
+            itemBuilder: (ctx, index) => Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: secondaryColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: ListTile(
+                  title: Text(friendsList[index]["firstName"] +
+                      " " +
+                      friendsList[index]["lastName"]),
+                  subtitle: Text(
+                      "UserID - ${friendsList[index]["userID"].toString()}"),
+                  trailing: isReceived
+                      ? IconButton(
+                          onPressed: () async {
+                            await acceptRequest(friendsList[index]["userID"]);
+                          },
+                          icon: Icon(Icons.check))
+                      : Text(""),
+                ),
+              ),
+            ),
+            itemCount: friendsList.length,
+          );
   }
 }
