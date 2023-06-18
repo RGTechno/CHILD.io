@@ -1,10 +1,9 @@
 import 'package:child_io/color.dart';
-import 'package:child_io/widgets/input_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/auth_provider.dart';
+import '../widgets/input_widget.dart';
 
 class AuthHome extends StatefulWidget {
   @override
@@ -26,20 +25,9 @@ class _AuthHomeState extends State<AuthHome> {
   String lastName = "";
   bool wantSignup = false;
 
-  late FocusNode _email;
-  late FocusNode _password;
-  late FocusNode _firstName;
-  late FocusNode _lastName;
-  late FocusNode _create;
-
   @override
   void initState() {
     super.initState();
-    _email = FocusNode();
-    _password = FocusNode();
-    _firstName = FocusNode();
-    _lastName = FocusNode();
-    _create = FocusNode();
   }
 
   @override
@@ -48,12 +36,6 @@ class _AuthHomeState extends State<AuthHome> {
     _lastNameController.clear();
     _emailController.clear();
     _passwordController.clear();
-
-    _email.dispose();
-    _password.dispose();
-    _firstName.dispose();
-    _lastName.dispose();
-    _create.dispose();
 
     super.dispose();
   }
@@ -70,7 +52,11 @@ class _AuthHomeState extends State<AuthHome> {
         setState(() {
           _isLoading = true;
         });
-        await context.read<AuthProvider>().login(context);
+        await context.read<AuthProvider>().login(
+              ctx: context,
+              email: userEmail,
+              password: userPass,
+            );
         setState(() {
           _isLoading = false;
         });
@@ -78,7 +64,13 @@ class _AuthHomeState extends State<AuthHome> {
         setState(() {
           _isLoading = true;
         });
-        await context.read<AuthProvider>().login(context);
+        await context.read<AuthProvider>().register(
+              ctx: context,
+              firstName: firstName,
+              lastName: lastName,
+              email: userEmail,
+              password: userPass,
+            );
         _firstNameController.clear();
         _lastNameController.clear();
         _emailController.clear();
@@ -131,8 +123,8 @@ class _AuthHomeState extends State<AuthHome> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Text(
                           !wantSignup
-                              ? "Resume your journey of balanced well being"
-                              : "Begin your journey of balanced well being",
+                              ? "Resume your journey of monitoring through will"
+                              : "Begin your journey of monitoring through will",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -156,7 +148,6 @@ class _AuthHomeState extends State<AuthHome> {
                                     padding: const EdgeInsets.all(3.0),
                                     child: TextFormField(
                                       controller: _firstNameController,
-                                      focusNode: _firstName,
                                       decoration: inpDec(
                                         "First Name",
                                         "First Name",
@@ -169,9 +160,6 @@ class _AuthHomeState extends State<AuthHome> {
                                       },
                                       onFieldSubmitted: (String value) {
                                         firstName = value;
-                                        _firstName.unfocus();
-                                        FocusScope.of(context)
-                                            .requestFocus(_lastName);
                                       },
                                       onSaved: (newValue) {
                                         setState(() {
@@ -191,7 +179,6 @@ class _AuthHomeState extends State<AuthHome> {
                                     padding: const EdgeInsets.all(3.0),
                                     child: TextFormField(
                                       controller: _lastNameController,
-                                      focusNode: _lastName,
                                       decoration: inpDec(
                                         "Last Name",
                                         "Last Name",
@@ -204,9 +191,6 @@ class _AuthHomeState extends State<AuthHome> {
                                       },
                                       onFieldSubmitted: (String value) {
                                         lastName = value;
-                                        _lastName.unfocus();
-                                        FocusScope.of(context)
-                                            .requestFocus(_email);
                                       },
                                       onSaved: (newValue) {
                                         setState(() {
@@ -223,7 +207,6 @@ class _AuthHomeState extends State<AuthHome> {
                               padding: const EdgeInsets.all(3.0),
                               child: TextFormField(
                                 controller: _emailController,
-                                focusNode: _email,
                                 decoration: inpDec(
                                   "Enter Email ID",
                                   "Email",
@@ -240,9 +223,6 @@ class _AuthHomeState extends State<AuthHome> {
                                 },
                                 onFieldSubmitted: (String value) {
                                   userEmail = value;
-                                  _email.unfocus();
-                                  FocusScope.of(context)
-                                      .requestFocus(_password);
                                 },
                                 onSaved: (newValue) {
                                   setState(() {
@@ -258,7 +238,6 @@ class _AuthHomeState extends State<AuthHome> {
                               padding: const EdgeInsets.all(3.0),
                               child: TextFormField(
                                 controller: _passwordController,
-                                focusNode: _password,
                                 decoration: inpDec(
                                   "Enter Password",
                                   "Password",
@@ -268,15 +247,10 @@ class _AuthHomeState extends State<AuthHome> {
                                   if (value!.isEmpty) {
                                     return "Required";
                                   }
-                                  if (value.length < 5) {
-                                    return "Password should be more than 5 characters";
-                                  }
                                   return null;
                                 },
                                 onFieldSubmitted: (String value) {
                                   userPass = value;
-                                  _password.unfocus();
-                                  FocusScope.of(context).requestFocus(_create);
                                 },
                                 onSaved: (newValue) {
                                   setState(() {

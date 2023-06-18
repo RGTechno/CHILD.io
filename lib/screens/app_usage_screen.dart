@@ -74,8 +74,8 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
     var minutes = ((secs % 3600) ~/ 60).toString().padLeft(2, '0');
     var seconds = (secs % 60).toString().padLeft(2, '0');
     return double.parse(hours) >= 1
-        ? "$hours hrs $minutes mins $seconds secs"
-        : "$minutes mins $seconds secs";
+        ? "$hours hrs $minutes mins"
+        : "$minutes mins";
   }
 
   @override
