@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:child_io/color.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,8 +11,9 @@ import '../constants.dart';
 class Header extends StatefulWidget {
   final double height;
   final int coins;
+  final bool showDrawer;
 
-  const Header(this.coins, this.height);
+  const Header(this.coins, this.height, this.showDrawer);
 
   @override
   State<Header> createState() => _HeaderState();
@@ -66,12 +68,14 @@ class _HeaderState extends State<Header> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
+          widget.showDrawer
+              ? IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                )
+              : Container(),
           Container(
             decoration: BoxDecoration(
                 border: Border.all(color: accentColor),
@@ -84,14 +88,19 @@ class _HeaderState extends State<Header> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Image.asset("assets/images/coin.png", fit: BoxFit.cover),
-                Text(
-                  coins.toString(),
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                _isloading
+                    ? LoadingAnimationWidget.halfTriangleDot(
+                        color: accentColor,
+                        size: 20,
+                      )
+                    : Text(
+                        coins.toString(),
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ],
             ),
           ),

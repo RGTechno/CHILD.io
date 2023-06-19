@@ -138,6 +138,7 @@ class _RanksScreenState extends State<RanksScreen> {
                           child: Header(
                             300,
                             mediaQuery.height * 0.05,
+                            false,
                           ),
                         ),
                         Padding(

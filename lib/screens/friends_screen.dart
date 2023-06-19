@@ -222,6 +222,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                     Header(
                       300,
                       mediaQuery.height * 0.05,
+                      false,
                     ),
                     TabBar(
                       unselectedLabelColor: textColor,
